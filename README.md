@@ -1,25 +1,87 @@
-# ReduxSimpleStarter
+# Redux Notes
 
-Interested in learning [Redux](https://www.udemy.com/react-redux/)?
+### Reducer 
+- function that return a value of application state
 
-### Getting Started
+#### Example
+Array of objects where each object is title of the book.
+Step 1: Create reducer
+Step 2: Wire application - in index.js
 
-There are two methods for getting started with this repo.
-
-#### Familiar with Git?
-Checkout this repo, install dependencies, then start the gulp process with the following:
-
+`reducers/reducer_books.js`
 ```
-> git clone https://github.com/StephenGrider/ReduxSimpleStarter.git
-> cd ReduxSimpleStarter
-> npm install
-> npm start
+export default function () {
+  return [
+    { title: 'JavaScript: The Good Parts' },
+    { title: 'Harry Potter' },
+    { title: 'The Dark Tower' },
+    { title: 'Eloquent Ruby' }
+  ]
+}
 ```
 
-#### Not Familiar with Git?
-Click [here](https://github.com/StephenGrider/ReactStarter/releases) then download the .zip file.  Extract the contents of the zip file, then open your terminal, change to the project directory, and:
-
+`reducers/index.js`
 ```
-> npm install
-> npm start
+import { combineReducers } from 'redux'
+import BooksReducer from './reducer_books'
+
+const rootReducer = combineReducers({
+  books: BooksReducer
+})
+
+export default rootReducer
+```
+
+### Container
+- React component that has direct connection to the state managed by Redux
+- Smart Components
+- Connect Container with Redux with react-redux - glue between React and Redux
+
+`containers/book-list.js`
+```
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+
+class BookList extends Component {
+
+  renderLister() {
+    return this.props.books.map((book) => {
+      return (
+        <li key={book.title} className='list-group-item'>{book.title}</li>
+      )
+    })
+  }
+
+  render() {
+    return (
+      <ul className='list-group col-sm-4'>
+        {this.renderList()}
+      </ul>
+    )
+  }
+}
+
+function mapStateToProps(state) {
+  // Whatever is return will show up as props
+  // inside of BookList
+  return {
+    books: state.books
+  }
+}
+
+export default connect(mapStateToProps)(BookList)
+```
+
+### mapStateToProps
+- Takes app state and whatever is returned is what is gonna show as props inside container
+
+`containers/book-list.js`
+```
+function mapStateToProps(state) {
+  // Whatever is return will show up as props
+  // inside of BookList
+  return {
+    books: state.books
+  }
+}
 ```
